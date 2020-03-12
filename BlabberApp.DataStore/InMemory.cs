@@ -6,60 +6,59 @@ using BlabberApp.Domain.Interfaces;
 namespace BlabberApp.DataStore
 {
     public class InMemory : IRepository
-    {
-        private ArrayList _items;
+   {
+        private List<IDatum> memory;
 
-        public InMemory()
-        {
-            this._items = new ArrayList();
+        public InMemoryDataStore(){
+            memory = new List<IDatum>();
         }
-        /*
-        public bool Create(IDatum datum)
-        {
-            int idx = this._items.Add(datum);
-            if (idx < 0)
-            {
-                throw new ArgumentOutOfRangeException("OH HELL!");
-            }
-            return true;
-        }
-        public IDatum Read(int idx)
-        {
-            return (BlabberApp.Domain.Interface IDatum)this._items[idx];
-        }
-        public bool Update(IDatum datum)
-        {
-            return true;
-        }
-        public bool Delete(int idx)
-        {
+        
+        public bool Create(IDatum datum){
             try
             {
-                this._items.RemoveAt(idx);
+                memory.Add(datum);
+                return true;
             }
-            catch (ArgumentOutOfRangeException e)
+            catch
             {
-                throw e;
+                return false;
             }
-            return true;
         }
-        */
+        public IDatum Read(ISpecimen spec){
+            IDatum value = null;
+            foreach(var val in memory)
+            {
+                if (val.getsysid().Equals(spec.getsysid()))
+                {
+                    return val;
+                }
+            }
+            return value;
+        }
 
-        T Add<T>(T item) where T : BaseDatum
-        {
-            return item;
+        public bool Update(IDatum datum){
+            for (int p = 0; p < memory.Count ;p++)
+            {
+                if (memory.IndexOf(datum) >= 0)
+                {
+                    memory[memory.IndexOf(datum)] = datum;
+                    return true;
+                }
+            }
+            return false;
         }
-        void Delete<T>(T item) where T : BaseDatum
-        {
 
-        }
-        List<T> GetAll<T>(ISpecification<T> spec = null) where T : BaseDatum
-        {
-            return;
-        }
-        T GetById<T>(string sysId) where T : BaseDatum
-        {
-            return BaseDatum;
-            void Update<T>(T item) where T : BaseDatum { }
+        public IDatum Delete(ISpecimen spec){
+            IDatum retval = null;
+            foreach(var val in memory)
+            {
+                if (val.getsysid().Equals(spec.getsysid()))
+                {
+                    retval = memory[memory.IndexOf(val)];
+                    memory.RemoveAt(memory.IndexOf(val));
+                }
+            }
+            return retval;
         }
     }
+}
